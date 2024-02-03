@@ -80,6 +80,7 @@ DEFAULT_CONFIG = {
     "temperature": 1,
     # 'max_tokens': 500,
     "markdown": True,
+    "beepy_compatibility_mode": False,
     "easy_copy": True,
     "non_interactive": False,
     "json_mode": False,
@@ -168,6 +169,12 @@ def add_markdown_system_message() -> None:
     instruction = "Always use code blocks with the appropriate language tags. If asked for a table always format it using Markdown syntax."
     messages.append({"role": "system", "content": instruction})
 
+def add_small_screen_system_message() -> None:
+    """
+    Try to force ChatGPT to respond with 125 characters so that the entire response fits on small screens of 50x15 characters.
+    """
+    instruction = "Always respond in 125 words. Format 50 characters per line."
+    messages.append({"role": "system", "content": instruction})
 
 def calculate_expense(
     prompt_tokens: int,
@@ -543,6 +550,9 @@ def main(
     # Add the system message for code blocks in case markdown is enabled in the config file
     if config["markdown"]:
         add_markdown_system_message()
+
+    if config["beepy_compatibility_mode"]:
+        add_small_screen_system_message()
 
     # Context from the command line option
     if context:
